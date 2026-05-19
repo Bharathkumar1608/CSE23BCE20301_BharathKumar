@@ -1,0 +1,130 @@
+show databases;
+
+create database student;
+
+drop database student;
+
+create database uni;
+
+use uni;
+
+create table students(
+    sid int,
+    sname varchar(50),
+    marks int
+);
+
+create table faculty(
+    fid int,
+    fname varchar(50),
+    salary int
+);
+
+create table courses(
+    cid int,
+    cname varchar(50),
+    credits int
+);
+
+show tables from uni;
+
+select * from students;
+
+insert into students values (101,'rahul',85);
+insert into students values (102,'kiran',78);
+insert into students values (103,'sneha',91);
+insert into students values (104,'arjun',67);
+insert into students values (105,'meena',88);
+
+insert into faculty values (201,'sharma',50000);
+insert into faculty values (202,'ravi',55000);
+insert into faculty values (203,'anita',60000);
+insert into faculty values (204,'vijay',52000);
+insert into faculty values (205,'deepa',58000);
+
+insert into courses values (301,'java',4);
+insert into courses values (302,'python',3);
+insert into courses values (303,'dbms',4);
+insert into courses values (304,'os',3);
+insert into courses values (305,'cn',4);
+
+select * from students;
+select * from faculty;
+select * from courses;
+
+desc students;
+desc faculty;
+desc courses;
+
+ALTER TABLE students ADD(
+    sphn bigint,
+    sphn2 bigint
+);
+
+ALTER TABLE faculty ADD(
+    fphone bigint
+);
+
+ALTER TABLE courses ADD(
+    duration int
+);
+
+insert into students values 
+(106,'semi',95,9876543210,9123456780);
+
+ALTER TABLE students DROP COLUMN sphn2;
+
+ALTER TABLE students ADD(
+    sCountry varchar(30) DEFAULT 'INDIA'
+);
+
+ALTER TABLE students RENAME COLUMN sCountry TO SLocation;
+
+select * from students;
+
+delete from faculty where fid=205;
+
+select * from faculty;
+
+RENAME TABLE courses TO subjects;
+
+show tables from uni;
+
+desc students;
+desc faculty;
+desc subjects;
+
+CREATE TABLE Worker (
+    WORKER_ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    FIRST_NAME CHAR(25),
+    LAST_NAME CHAR(25),
+    SALARY INT(15),
+    JOINING_DATE DATETIME,
+    DEPARTMENT CHAR(25)
+);
+
+INSERT INTO Worker
+(WORKER_ID, FIRST_NAME, LAST_NAME, SALARY, JOINING_DATE, DEPARTMENT) VALUES
+(001, 'Monika', 'Arora', 100000, '2014-02-20 09:00:00', 'HR'),
+(002, 'Niharika', 'Verma', 80000, '2014-06-11 09:00:00', 'Admin'),
+(003, 'Vishal', 'Singhal', 300000, '2014-02-20 09:00:00', 'HR'),
+(004, 'Amitabh', 'Singh', 500000, '2014-02-20 09:00:00', 'Admin'),
+(005, 'Vivek', 'Bhati', 500000, '2014-06-11 09:00:00', 'Admin'),
+(006, 'Vipul', 'Diwan', 200000, '2014-06-11 09:00:00', 'Account'),
+(007, 'Satish', 'Kumar', 75000, '2014-01-20 09:00:00', 'Account'),
+(008, 'Geetika', 'Chauhan', 90000, '2014-04-11 09:00:00', 'Admin');
+
+select * from worker;
+
+UPDATE worker 
+SET FIRST_NAME='Jayanth',
+    LAST_NAME='V'
+WHERE worker_id=1;
+
+UPDATE worker 
+SET salary = salary + 5000;
+
+DELETE FROM worker 
+WHERE worker_id=8;
+
+select * from worker;
