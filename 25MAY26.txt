@@ -1,0 +1,307 @@
+use student
+switched to db student
+
+
+db.createCollection("stdt")
+{ ok: 1 }
+
+
+db.stdt.insertOne({name:'math',roll:101,dept:'cse'})
+{
+  acknowledged: true,
+  insertedId: ObjectId('6a14538d5e372b5c5daa6c1f')
+}
+
+
+db.stdt.insertMany({name:'matte',roll:102,dept:'ds'},{name:'punith',roll:103,dept:'ds'},{name:'mohith',roll:104,dept:'cs'},{name:'dolly',roll:105,dept:'ece'})
+MongoInvalidArgumentError: Argument "docs" must be an array of documents
+
+
+db.stdt.insertMany([{name:'matte',roll:102,dept:'ds'},{name:'punith',roll:103,dept:'ds'},{name:'mohith',roll:104,dept:'cs'},{name:'dolly',roll:105,dept:'ece'}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6a1454605e372b5c5daa6c20'),
+    '1': ObjectId('6a1454605e372b5c5daa6c21'),
+    '2': ObjectId('6a1454605e372b5c5daa6c22'),
+    '3': ObjectId('6a1454605e372b5c5daa6c23')
+  }
+}
+
+
+show dbs
+admin    40.00 KiB
+config   60.00 KiB
+local    40.00 KiB
+student  40.00 KiB
+
+
+use faculty
+switched to db faculty
+
+
+db.createCollection("data")
+{ ok: 1 }
+
+
+db.data.insertOne(name:'albert',fid:70101)
+SyntaxError: Unexpected token, expected "," (1:22)
+
+> 1 | db.data.insertOne(name:'albert',fid:70101)
+    |                       ^
+
+
+
+db.data.insertOne({name:'albert',fid:70101})
+{
+  acknowledged: true,
+  insertedId: ObjectId('6a1455035e372b5c5daa6c24')
+}
+
+
+db.data.drop()
+true
+
+
+db.dropDatabase()
+{ ok: 1, dropped: 'faculty' }
+
+
+db
+faculty
+
+
+use student
+switched to db student
+
+
+db
+student
+
+
+show dbs
+admin    40.00 KiB
+config   92.00 KiB
+local    40.00 KiB
+student  72.00 KiB
+
+
+show collections
+stdt
+
+
+db.stdt.find()
+{
+  _id: ObjectId('6a14538d5e372b5c5daa6c1f'),
+  name: 'math',
+  roll: 101,
+  dept: 'cse'
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c20'),
+  name: 'matte',
+  roll: 102,
+  dept: 'ds'
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c21'),
+  name: 'punith',
+  roll: 103,
+  dept: 'ds'
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c22'),
+  name: 'mohith',
+  roll: 104,
+  dept: 'cs'
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c23'),
+  name: 'dolly',
+  roll: 105,
+  dept: 'ece'
+}
+
+
+use student
+already on db student
+
+
+db.stdt.updateOne({id:101},{$set:{name:'albert'}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+
+
+db.stdt.find().pretty()
+{
+  _id: ObjectId('6a14538d5e372b5c5daa6c1f'),
+  name: 'math',
+  roll: 101,
+  dept: 'cse'
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c20'),
+  name: 'matte',
+  roll: 102,
+  dept: 'ds'
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c21'),
+  name: 'punith',
+  roll: 103,
+  dept: 'ds'
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c22'),
+  name: 'mohith',
+  roll: 104,
+  dept: 'cs'
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c23'),
+  name: 'dolly',
+  roll: 105,
+  dept: 'ece'
+}
+
+
+db.stdt.updateMany({dept:'cs'},{$set:{dept:'cse'}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+db.stdt.updateMany({dept:'cse'},{$set:{dept_id:901}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+
+
+db.stdt.updateMany({dept:'ds'},{$set:{dept_id:902}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+
+
+db.stdt.updateMany({dept:'ece'},{$set:{dept_id:903}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+db.stdt.find().pretty()
+{
+  _id: ObjectId('6a14538d5e372b5c5daa6c1f'),
+  name: 'math',
+  roll: 101,
+  dept: 'cse',
+  dept_id: 901
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c20'),
+  name: 'matte',
+  roll: 102,
+  dept: 'ds',
+  dept_id: 902
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c21'),
+  name: 'punith',
+  roll: 103,
+  dept: 'ds',
+  dept_id: 902
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c22'),
+  name: 'mohith',
+  roll: 104,
+  dept: 'cse',
+  dept_id: 901
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c23'),
+  name: 'dolly',
+  roll: 105,
+  dept: 'ece',
+  dept_id: 903
+}
+
+
+db.stdt.insertOne({name:'charlie',roll:106,dept:'ece'})
+{
+  acknowledged: true,
+  insertedId: ObjectId('6a1458d45e372b5c5daa6c25')
+}
+
+
+db.stdt.deleteOne({id:103})
+{
+  acknowledged: true,
+  deletedCount: 0
+}
+
+
+db.stdt.deleteOne({roll:103})
+{
+  acknowledged: true,
+  deletedCount: 1
+}
+
+
+db.stdt.deleteMany({dept_id:903})
+{
+  acknowledged: true,
+  deletedCount: 1
+}
+
+
+db.stdt.deleteMany({dept:'ece'})
+{
+  acknowledged: true,
+  deletedCount: 1
+}
+
+
+db.stdt.find().pretty()
+{
+  _id: ObjectId('6a14538d5e372b5c5daa6c1f'),
+  name: 'math',
+  roll: 101,
+  dept: 'cse',
+  dept_id: 901
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c20'),
+  name: 'matte',
+  roll: 102,
+  dept: 'ds',
+  dept_id: 902
+}
+{
+  _id: ObjectId('6a1454605e372b5c5daa6c22'),
+  name: 'mohith',
+  roll: 104,
+  dept: 'cse',
+  dept_id: 901
+}
