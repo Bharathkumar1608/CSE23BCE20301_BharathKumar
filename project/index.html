@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodRescue Hub</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #1f2933;
+      background: #f4f7f5;
+    }
+
+    header {
+      padding: 24px;
+      background: #14532d;
+      color: white;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 24px auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 20px;
+    }
+
+    section {
+      background: white;
+      border: 1px solid #d9e2dd;
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #b8c5bf;
+      border-radius: 6px;
+      font: inherit;
+      font-size: 15px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    button {
+      width: fit-content;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: white;
+      background: #15803d;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #166534;
+    }
+
+    .list {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      border: 1px solid #d9e2dd;
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfdfb;
+    }
+
+    .item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .item form {
+      margin-top: 12px;
+    }
+
+    .message {
+      min-height: 22px;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #166534;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FoodRescue Hub</h1>
+  </header>
+
+  <main>
+    <section>
+      <h2>Add Restaurant</h2>
+      <form id="restaurantForm">
+        <label>
+          Restaurant Name
+          <input name="name" required>
+        </label>
+        <label>
+          Owner Name
+          <input name="ownerName" required>
+        </label>
+        <label>
+          Phone
+          <input name="phone" required>
+        </label>
+        <label>
+          Address
+          <input name="address" required>
+        </label>
+        <button type="submit">Add Restaurant</button>
+      </form>
+      <div id="restaurantMessage" class="message"></div>
+      <div id="restaurantList" class="list"></div>
+    </section>
+
+    <section>
+      <h2>Add NGO</h2>
+      <form id="ngoForm">
+        <label>
+          NGO Name
+          <input name="name" required>
+        </label>
+        <label>
+          Contact Person
+          <input name="contactPerson" required>
+        </label>
+        <label>
+          Phone
+          <input name="phone" required>
+        </label>
+        <label>
+          Address
+          <input name="address" required>
+        </label>
+        <button type="submit">Add NGO</button>
+      </form>
+      <div id="ngoMessage" class="message"></div>
+      <div id="ngoList" class="list"></div>
+    </section>
+
+    <section>
+      <h2>Add Food Category</h2>
+      <form id="categoryForm">
+        <label>
+          Category Name
+          <input name="name" placeholder="Cooked Food" required>
+        </label>
+        <label>
+          Description
+          <textarea name="description" placeholder="Fresh cooked meals"></textarea>
+        </label>
+        <button type="submit">Add Category</button>
+      </form>
+      <div id="categoryMessage" class="message"></div>
+      <div id="categoryList" class="list"></div>
+    </section>
+
+    <section>
+      <h2>Restaurant Adds Food</h2>
+      <form id="donationForm">
+        <label>
+          Restaurant
+          <select name="restaurant" id="donationRestaurant" required></select>
+        </label>
+        <label>
+          Food Category
+          <select name="category" id="donationCategory" required></select>
+        </label>
+        <label>
+          Food Name
+          <input name="foodName" placeholder="Veg Biryani" required>
+        </label>
+        <label>
+          Quantity
+          <input name="quantity" type="number" min="1" required>
+        </label>
+        <label>
+          Pickup Address
+          <input name="pickupAddress" required>
+        </label>
+        <label>
+          Expiry Date
+          <input name="expiryDate" type="date" required>
+        </label>
+        <button type="submit">Add Food</button>
+      </form>
+      <div id="donationMessage" class="message"></div>
+    </section>
+
+    <section class="full">
+      <h2>NGO Takes Available Food</h2>
+      <div id="availableFoodMessage" class="message"></div>
+      <div id="availableFoodList" class="list"></div>
+    </section>
+  </main>
+
+  <script>
+    let restaurants = [];
+    let ngos = [];
+    let categories = [];
+    let donations = [];
+
+    const createPayload = (form) => Object.fromEntries(new FormData(form));
+
+    const showMessage = (id, text, isError = false) => {
+      const element = document.getElementById(id);
+      element.textContent = text;
+      element.style.color = isError ? "#b91c1c" : "#166534";
+    };
+
+    const request = async (url, options) => {
+      const response = await fetch(url, options);
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Request failed");
+      }
+
+      return data;
+    };
+
+    const fillSelect = (id, items, labelKey, emptyText) => {
+      const select = document.getElementById(id);
+      select.innerHTML = items.length
+        ? items.map((item) => `<option value="${item._id}">${item[labelKey]}</option>`).join("")
+        : `<option value="">${emptyText}</option>`;
+      select.disabled = items.length === 0;
+    };
+
+    const loadRestaurants = async () => {
+      restaurants = await request("/api/restaurants");
+      fillSelect("donationRestaurant", restaurants, "name", "Add a restaurant first");
+
+      document.getElementById("restaurantList").innerHTML = restaurants.map((restaurant) => `
+        <div class="item">
+          <strong>${restaurant.name}</strong>
+          Owner: ${restaurant.ownerName}<br>
+          Phone: ${restaurant.phone}<br>
+          Address: ${restaurant.address}
+        </div>
+      `).join("");
+    };
+
+    const loadNgos = async () => {
+      ngos = await request("/api/ngos");
+
+      document.getElementById("ngoList").innerHTML = ngos.map((ngo) => `
+        <div class="item">
+          <strong>${ngo.name}</strong>
+          Contact: ${ngo.contactPerson}<br>
+          Phone: ${ngo.phone}<br>
+          Address: ${ngo.address}
+        </div>
+      `).join("");
+    };
+
+    const loadCategories = async () => {
+      categories = await request("/api/categories");
+      fillSelect("donationCategory", categories, "name", "Add a category first");
+
+      document.getElementById("categoryList").innerHTML = categories.map((category) => `
+        <div class="item">
+          <strong>${category.name}</strong>
+          ${category.description || ""}
+        </div>
+      `).join("");
+    };
+
+    const loadAvailableFood = async () => {
+      donations = await request("/api/donations");
+      const available = donations.filter((donation) => donation.status === "available" && donation.quantity > 0);
+      const list = document.getElementById("availableFoodList");
+
+      if (!available.length) {
+        list.innerHTML = '<div class="item">No available food right now.</div>';
+        return;
+      }
+
+      list.innerHTML = available.map((donation) => `
+        <div class="item">
+          <strong>${donation.foodName}</strong>
+          Restaurant: ${donation.restaurant?.name || "Unknown"}<br>
+          Category: ${donation.category?.name || "Unknown"}<br>
+          Quantity Available: ${donation.quantity}<br>
+          Pickup: ${donation.pickupAddress}<br>
+          Expiry: ${new Date(donation.expiryDate).toLocaleDateString()}
+          <form class="requestForm" data-donation-id="${donation._id}" data-max="${donation.quantity}">
+            <label>
+              NGO
+              <select name="ngo" required>
+                ${ngos.length ? ngos.map((ngo) => `<option value="${ngo._id}">${ngo.name}</option>`).join("") : '<option value="">Add an NGO first</option>'}
+              </select>
+            </label>
+            <label>
+              Quantity To Take
+              <input name="quantityRequested" type="number" min="1" max="${donation.quantity}" required>
+            </label>
+            <label>
+              Notes
+              <textarea name="notes" placeholder="Why this NGO needs the food"></textarea>
+            </label>
+            <button type="submit" ${ngos.length ? "" : "disabled"}>Take Food</button>
+          </form>
+        </div>
+      `).join("");
+    };
+
+    const refreshAll = async () => {
+      await loadRestaurants();
+      await loadNgos();
+      await loadCategories();
+      await loadAvailableFood();
+    };
+
+    document.getElementById("restaurantForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      try {
+        await request("/api/restaurants", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(createPayload(event.target))
+        });
+
+        event.target.reset();
+        showMessage("restaurantMessage", "Restaurant added successfully");
+        await loadRestaurants();
+      } catch (error) {
+        showMessage("restaurantMessage", error.message, true);
+      }
+    });
+
+    document.getElementById("ngoForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      try {
+        await request("/api/ngos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(createPayload(event.target))
+        });
+
+        event.target.reset();
+        showMessage("ngoMessage", "NGO added successfully");
+        await loadNgos();
+        await loadAvailableFood();
+      } catch (error) {
+        showMessage("ngoMessage", error.message, true);
+      }
+    });
+
+    document.getElementById("categoryForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      try {
+        await request("/api/categories", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(createPayload(event.target))
+        });
+
+        event.target.reset();
+        showMessage("categoryMessage", "Category added successfully");
+        await loadCategories();
+      } catch (error) {
+        showMessage("categoryMessage", error.message, true);
+      }
+    });
+
+    document.getElementById("donationForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const payload = createPayload(event.target);
+      payload.quantity = Number(payload.quantity);
+
+      try {
+        await request("/api/donations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        event.target.reset();
+        showMessage("donationMessage", "Food added successfully");
+        await loadAvailableFood();
+      } catch (error) {
+        showMessage("donationMessage", error.message, true);
+      }
+    });
+
+    document.getElementById("availableFoodList").addEventListener("submit", async (event) => {
+      if (!event.target.classList.contains("requestForm")) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const payload = createPayload(event.target);
+      payload.donation = event.target.dataset.donationId;
+      payload.quantityRequested = Number(payload.quantityRequested);
+
+      try {
+        await request(`/api/donations/${payload.donation}/take`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        showMessage("availableFoodMessage", "Food taken successfully. Available quantity updated.");
+        await loadAvailableFood();
+      } catch (error) {
+        showMessage("availableFoodMessage", error.message, true);
+      }
+    });
+
+    refreshAll().catch((error) => {
+      showMessage("availableFoodMessage", error.message, true);
+    });
+  </script>
+</body>
+</html>
